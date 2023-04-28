@@ -1,0 +1,114 @@
+# # This file contains the fastlane.tools configuration
+# # You can find the documentation at https://docs.fastlane.tools
+# #
+# # For a list of all available actions, check out
+# #
+# #     https://docs.fastlane.tools/actions
+# #
+# # For a list of all available plugins, check out
+# #
+# #     https://docs.fastlane.tools/plugins/available-plugins
+# #
+
+# # Uncomment the line if you want fastlane to automatically update itself
+# # update_fastlane
+
+default_platform(:android)
+
+platform :android do
+
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  scheme = nil
+  output = nil
+
+  desc "Build Dev"
+  lane :buildDev do
+    scheme = "Release"
+    output = "release"
+    build
+  end
+
+  # desc "Build Staging"
+  # lane :buildStaging do
+  #   scheme = "Staging"
+  #   output = "staging"
+  #   build
+  # end
+
+  # desc "Build Production"
+  # lane :buildProd do
+  #   scheme = "Production"
+  #   output = "production"
+  #   build
+  # end
+
+  desc "Build bundle and Create APK for #{scheme}"
+  lane :build do
+    gradle(
+        task: "clean assemble",
+        flavor:"#{scheme}",
+        # build_type: "Debug",
+        print_command: true,
+        properties: {
+          "android.injected.signing.store.file" => "/home/runner/work/capacitor-mobile-rn/capacitor-mobile-rn/android/keys/capacitor-key.jks",
+          "android.injected.signing.store.password" => ENV['KEYSTORE_PASSWORD'],
+          "android.injected.signing.key.alias" => ENV['KEYSTORE_ALIAS'],
+          "android.injected.signing.key.password" => ENV['KEYSTORE_PASSWORD'],
+        }
+    )
+
+    # bundletool(
+    #     ks_path: "keys/capacitor-key.jks",
+    #     ks_password: "c4p4t1t0r",#ENV['KEYSTORE_PASSWORD']
+    #     ks_key_alias: "key0",#ENV['KEYSTORE_ALIAS']
+    #     ks_key_alias_password: "c4p4t1t0r",#ENV['KEYSTORE_PASSWORD']
+    #     bundletool_version: '1.5.0',
+    #     aab_path: "app/build/outputs/bundle/#{output}Release/app-#{output}-release.aab",
+    #     apk_output_path: "app/build/outputs/apk/debug/app-debug.apk",
+    #     verbose: true
+    # )
+
+    # if scheme == "Production"
+    #     deploy
+    # elsif scheme == "Staging"
+    #     deploy_to_firebase_prod
+    # else
+        deploy_to_firebase_dev
+    # end
+
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  end
+
+  desc "Deploy DEV to Firebase App Distribution"
+  lane :deploy_to_firebase_dev do
+    firebase_app_distribution(
+       app: ENV['FIREBASE_APP_ID_DEV'],
+       apk_path: "app/build/outputs/apk/#{output}/app-#{output}.apk",
+       firebase_cli_token: ENV['FIREBASE_TOKEN'],
+       groups_file: "FirebaseAppDistributionConfig/groups.txt",
+       release_notes_file: "FirebaseAppDistributionConfig/release_notes.txt",
+    )
+  end
+
+  # desc "Deploy PROD env to Firebase App Distribution"
+  #   lane :deploy_to_firebase_prod do
+  #     firebase_app_distribution(
+  #        app: "1:559603286572:android:5fffe3e67fec9ffda7c789",#ENV['FIREBASE_APP_ID_PROD']
+  #        apk_path: "app/build/outputs/apk/#{output}/release/app-#{output}-universal-release.apk",
+  #        firebase_cli_token: "1//0gQUvxCMTR-LTCgYIARAAGBASNwF-L9IrvmbWHvpw_ponxGtLi5iKjWzBWObc2zfY-KmWvhxWEkUSR9McGj0WcR5Hegl3aSC7aKQ",#ENV['FIREBASE_TOKEN']
+  #        groups_file: "FirebaseAppDistributionConfig/groups.txt",#ENV['FIREBASE_TESTER_GROUPS']
+  #        release_notes_file: "FirebaseAppDistributionConfig/release_notes.txt"#ENV['FIREBASE_RELEASE_NOTES']
+  #     )
+  #   end
+
+  # desc "Deploy a new version to the Google Play"
+  # lane :deploy do
+  #   gradle(task: "clean assembleRelease")
+  #   upload_to_play_store
+  # end
+end

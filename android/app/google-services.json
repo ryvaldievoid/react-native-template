@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "559603286572",
+    "project_id": "capacitor-react-native",
+    "storage_bucket": "capacitor-react-native.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559603286572:android:5fffe3e67fec9ffda7c789",
+        "android_client_info": {
+          "package_name": "com.capacitor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "559603286572-sgmfdkpusfp1kt016qeh6bdgb8dkc17d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRxO2okYV3YN-97wcVotAkaoz3disVkRw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "559603286572-sgmfdkpusfp1kt016qeh6bdgb8dkc17d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
